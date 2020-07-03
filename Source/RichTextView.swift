@@ -16,6 +16,7 @@ public class RichTextView: UIView {
     public private(set) var input: String
     private(set) var richTextParser: RichTextParser
     private(set) var textColor: UIColor
+    private(set) var interactiveTextColor: UIColor
     private(set) var isSelectable: Bool
     private(set) var isEditable: Bool
     public weak var textViewDelegate: RichTextViewDelegate?
@@ -54,6 +55,7 @@ public class RichTextView: UIView {
             customAdditionalAttributes: customAdditionalAttributes
         )
         self.textColor = textColor
+        self.interactiveTextColor = interactiveTextColor
         self.textViewDelegate = textViewDelegate
         super.init(frame: frame)
         self.setupSubviews()
@@ -64,6 +66,7 @@ public class RichTextView: UIView {
         self.input = ""
         self.richTextParser = RichTextParser()
         self.textColor = UIColor.black
+        self.interactiveTextColor = UIColor.black
         self.isSelectable = true
         self.isEditable = false
         super.init(coder: aDecoder)
@@ -90,6 +93,7 @@ public class RichTextView: UIView {
             customAdditionalAttributes: customAdditionalAttributes ?? self.richTextParser.customAdditionalAttributes
         )
         self.textColor = textColor ?? self.textColor
+        self.interactiveTextColor = interactiveTextColor ?? self.interactiveTextColor
         self.subviews.forEach { $0.removeFromSuperview() }
         self.setupSubviews()
         completion?(self.errors)
@@ -135,6 +139,7 @@ public class RichTextView: UIView {
                     from: richText,
                     font: font,
                     textColor: self.textColor,
+                    interactiveTextColor: self.interactiveTextColor,
                     isSelectable: self.isSelectable,
                     isEditable: self.isEditable,
                     textViewDelegate: self.textViewDelegate
