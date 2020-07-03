@@ -52,6 +52,7 @@ class UITextViewGenerator {
         textView.isScrollEnabled = false
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
+        textView.textContainer.lineBreakMode = .byTruncatingTail
         textView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(UITextViewGenerator.handleCustomLinkTapOnTextViewIfNecessary(_:))))
         if #available(iOS 10.0, *) {
             textView.adjustsFontForContentSizeCategory = true
