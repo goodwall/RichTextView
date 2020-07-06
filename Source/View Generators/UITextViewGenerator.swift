@@ -64,24 +64,55 @@ class UITextViewGenerator {
     }
 
     @objc static func handleCustomLinkTapOnTextViewIfNecessary(_ recognizer: UITapGestureRecognizer) {
-        guard let textView = recognizer.view as? UITextView else {
-            return
+        guard let textView = recognizer.view as? UITextView else { return }
+        guard let link = recognizer.detectedLink() else { return }
+
+        if let richTextViewDelegate = textView.delegate as? RichTextViewDelegate {
+            richTextViewDelegate.didTapCustomLink(withID: link)
+        }
+    }
+}
+
+private extension UITapGestureRecognizer {
+
+    func detectedLink() -> String? {
+        guard let textView: UITextView = self.view as? UITextView else { return nil }
+
+        let tapLocation = self.location(in: self.view)
+
+        guard var textPosition1 = textView.closestPosition(to: tapLocation) else { return nil }
+        var textPosition2: UITextPosition? = textView.position(from: textPosition1, offset: 1)
+
+        if textPosition2 != nil {
+            if let p = textView.position(from: textPosition1, offset: -1) {
+                textPosition1 = p
+                textPosition2 = textView.position(from: textPosition1, offset: 1)
+            } else {
+                return nil
+            }
+        } else {
+            return nil
         }
 
-        var location = recognizer.location(in: textView)
-        location.x -= textView.textContainerInset.left
-        location.y -= textView.textContainerInset.top
-        let tappedCharacterIndex = textView.layoutManager.characterIndex(
-            for: location,
-            in: textView.textContainer,
-            fractionOfDistanceBetweenInsertionPoints: nil
-        )
-        guard tappedCharacterIndex < textView.textStorage.length else {
-            return
+        let range = textView.textRange(from: textPosition1, to: textPosition2!)
+        let startOffset = textView.offset(from: textView.beginningOfDocument, to: range!.start)
+        let endOffset = textView.offset(from: textView.beginningOfDocument, to: range!.end)
+        let offsetRange = NSRange(location: startOffset, length: endOffset - startOffset)
+        if offsetRange.location == NSNotFound || offsetRange.length == 0 {
+            return nil
         }
-        if let linkID = textView.attributedText?.attribute(.customLink, at: tappedCharacterIndex, effectiveRange: nil) as? String,
-            let richTextViewDelegate = textView.delegate as? RichTextViewDelegate {
-            richTextViewDelegate.didTapCustomLink(withID: linkID)
+
+        if NSMaxRange(offsetRange) > textView.attributedText.length {
+            return nil
         }
+
+        let attributedSubstring = textView.attributedText.attributedSubstring(from: offsetRange)
+        let link = attributedSubstring.attribute(.link, at: 0, effectiveRange: nil)
+
+        if let url = link {
+            return "\(url)"
+        }
+
+        return nil
     }
 }
