@@ -113,6 +113,28 @@ private extension UITapGestureRecognizer {
             return "\(url)"
         }
 
-        return nil
+        // Check using data detector
+        let detectorType = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+        guard let detector = detectorType else { return nil }
+
+        let matches = detector.matches(
+            in: textView.text,
+            options: [],
+            range: NSRange(location: 0, length: textView.text.utf16.count)
+        )
+
+        guard let match = matches.first else { return nil }
+        guard let range = Range(match.range, in: textView.text) else { return nil }
+
+        let linkDetected = String(textView.text[range])
+        let lowercased = linkDetected.lowercased()
+        let finalLink: String
+
+        if lowercased.starts(with: "http://") || lowercased.starts(with: "https://") {
+            finalLink = linkDetected
+        } else {
+            finalLink = "http://" + linkDetected
+        }
+        return finalLink
     }
 }
