@@ -40,7 +40,8 @@ class UITextViewGenerator {
                             interactiveTextColor: UIColor,
                             isSelectable: Bool,
                             isEditable: Bool,
-                            textViewDelegate: RichTextViewDelegate?) -> UITextView {
+                            textViewDelegate: RichTextViewDelegate?,
+                            lineBreakMode: NSLineBreakMode?) -> UITextView {
         let textView = UITextView()
         let mutableInput = NSMutableAttributedString(attributedString: input)
         mutableInput.replaceFont(with: font)
@@ -53,7 +54,11 @@ class UITextViewGenerator {
         textView.isScrollEnabled = false
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
-        textView.textContainer.lineBreakMode = .byTruncatingTail
+
+        if let lineBreakMode = lineBreakMode {
+            textView.textContainer.lineBreakMode = lineBreakMode
+        }
+
         textView.linkTextAttributes = [.foregroundColor: interactiveTextColor]
         textView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(UITextViewGenerator.handleCustomLinkTapOnTextViewIfNecessary(_:))))
         if #available(iOS 10.0, *) {

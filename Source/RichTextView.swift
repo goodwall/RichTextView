@@ -19,6 +19,7 @@ public class RichTextView: UIView {
     private(set) var interactiveTextColor: UIColor
     private(set) var isSelectable: Bool
     private(set) var isEditable: Bool
+    private(set) var lineBreakMode: NSLineBreakMode?
     public weak var textViewDelegate: RichTextViewDelegate?
 
     private(set) var errors: [ParsingError]?
@@ -35,6 +36,7 @@ public class RichTextView: UIView {
                 latexParser: LatexParserProtocol = LatexParser(),
                 font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize),
                 textColor: UIColor = UIColor.black,
+                lineBreakMode: NSLineBreakMode? = .byTruncatingTail,
                 isSelectable: Bool = true,
                 isEditable: Bool = false,
                 latexTextBaselineOffset: CGFloat = 0,
@@ -57,6 +59,7 @@ public class RichTextView: UIView {
         self.textColor = textColor
         self.interactiveTextColor = interactiveTextColor
         self.textViewDelegate = textViewDelegate
+        self.lineBreakMode = lineBreakMode
         super.init(frame: frame)
         self.setupSubviews()
         completion?(self.errors)
@@ -79,6 +82,7 @@ public class RichTextView: UIView {
                        latexParser: LatexParserProtocol? = nil,
                        font: UIFont? = nil,
                        textColor: UIColor? = nil,
+                       lineBreakMode: NSLineBreakMode? = .byTruncatingTail,
                        latexTextBaselineOffset: CGFloat? = nil,
                        interactiveTextColor: UIColor? = nil,
                        customAdditionalAttributes: [String: [NSAttributedString.Key: Any]]? = nil,
@@ -93,6 +97,7 @@ public class RichTextView: UIView {
             customAdditionalAttributes: customAdditionalAttributes ?? self.richTextParser.customAdditionalAttributes
         )
         self.textColor = textColor ?? self.textColor
+        self.lineBreakMode = lineBreakMode
         self.interactiveTextColor = interactiveTextColor ?? self.interactiveTextColor
         self.subviews.forEach { $0.removeFromSuperview() }
         self.setupSubviews()
@@ -142,7 +147,8 @@ public class RichTextView: UIView {
                     interactiveTextColor: self.interactiveTextColor,
                     isSelectable: self.isSelectable,
                     isEditable: self.isEditable,
-                    textViewDelegate: self.textViewDelegate
+                    textViewDelegate: self.textViewDelegate,
+                    lineBreakMode: self.lineBreakMode
                 )
             }
         }
