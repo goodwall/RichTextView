@@ -41,7 +41,8 @@ class UITextViewGenerator {
                             isSelectable: Bool,
                             isEditable: Bool,
                             textViewDelegate: RichTextViewDelegate?,
-                            lineBreakMode: NSLineBreakMode?) -> UITextView {
+                            lineBreakMode: NSLineBreakMode?,
+                            textAlignment: NSTextAlignment?) -> UITextView {
         let textView = UITextView()
         let mutableInput = NSMutableAttributedString(attributedString: input)
         mutableInput.replaceFont(with: font)
@@ -57,6 +58,10 @@ class UITextViewGenerator {
 
         if let lineBreakMode = lineBreakMode {
             textView.textContainer.lineBreakMode = lineBreakMode
+        }
+
+        if let textAlignment = textAlignment {
+            textView.textAlignment = textAlignment
         }
 
         textView.linkTextAttributes = [.foregroundColor: interactiveTextColor]

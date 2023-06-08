@@ -20,6 +20,7 @@ public class RichTextView: UIView {
     private(set) var isSelectable: Bool
     private(set) var isEditable: Bool
     private(set) var lineBreakMode: NSLineBreakMode?
+    private(set) var textAlignment: NSTextAlignment?
     public weak var textViewDelegate: RichTextViewDelegate?
 
     private(set) var errors: [ParsingError]?
@@ -37,6 +38,7 @@ public class RichTextView: UIView {
                 font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize),
                 textColor: UIColor = UIColor.black,
                 lineBreakMode: NSLineBreakMode? = .byTruncatingTail,
+                textAlignment: NSTextAlignment? = nil,
                 isSelectable: Bool = true,
                 isEditable: Bool = false,
                 latexTextBaselineOffset: CGFloat = 0,
@@ -60,6 +62,7 @@ public class RichTextView: UIView {
         self.interactiveTextColor = interactiveTextColor
         self.textViewDelegate = textViewDelegate
         self.lineBreakMode = lineBreakMode
+        self.textAlignment = textAlignment
         super.init(frame: frame)
         self.setupSubviews()
         completion?(self.errors)
@@ -83,6 +86,7 @@ public class RichTextView: UIView {
                        font: UIFont? = nil,
                        textColor: UIColor? = nil,
                        lineBreakMode: NSLineBreakMode? = .byTruncatingTail,
+                       textAlignment: NSTextAlignment? = nil,
                        latexTextBaselineOffset: CGFloat? = nil,
                        interactiveTextColor: UIColor? = nil,
                        customAdditionalAttributes: [String: [NSAttributedString.Key: Any]]? = nil,
@@ -98,6 +102,7 @@ public class RichTextView: UIView {
         )
         self.textColor = textColor ?? self.textColor
         self.lineBreakMode = lineBreakMode
+        self.textAlignment = textAlignment
         self.interactiveTextColor = interactiveTextColor ?? self.interactiveTextColor
         self.subviews.forEach { $0.removeFromSuperview() }
         self.setupSubviews()
@@ -148,7 +153,8 @@ public class RichTextView: UIView {
                     isSelectable: self.isSelectable,
                     isEditable: self.isEditable,
                     textViewDelegate: self.textViewDelegate,
-                    lineBreakMode: self.lineBreakMode
+                    lineBreakMode: self.lineBreakMode,
+                    textAlignment: self.textAlignment
                 )
             }
         }
