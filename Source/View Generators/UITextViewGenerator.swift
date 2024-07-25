@@ -85,6 +85,7 @@ class UITextViewGenerator {
 
 private extension UITapGestureRecognizer {
 
+    // swiftlint:disable identifier_name
     func detectedLink() -> String? {
         guard let textView: UITextView = self.view as? UITextView else { return nil }
 

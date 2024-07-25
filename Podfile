@@ -9,6 +9,7 @@ target 'RichTextView' do
   use_frameworks!
 
   pod 'Down'
+  pod 'DTCoreText'
   pod 'iosMath', :git => 'https://github.com/tophatmonocle/iosMath.git'
   pod 'SwiftLint'
   pod 'SnapKit'

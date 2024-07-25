@@ -7,6 +7,7 @@
 //
 
 import Down
+import DTCoreText
 
 class RichTextParser {
 
@@ -206,11 +207,10 @@ class RichTextParser {
         let inputString = mutableAttributedString.string
         let inputStringWithoutBreakingSpaces = inputString.replaceTrailingWhiteSpaceWithNonBreakingSpace().replaceLeadingWhiteSpaceWithNonBreakingSpace()
         guard let inputAsHTMLString = try? Down(markdownString: inputStringWithoutBreakingSpaces).toHTML([.unsafe, .hardBreaks]),
-            let inputAsHTMLWithZeroWidthSpaceRemoved = inputAsHTMLString.replaceAppropiateZeroWidthSpaces(),
-            let htmlData = inputAsHTMLWithZeroWidthSpaceRemoved.data(using: .utf8) else {
+            let inputAsHTMLWithZeroWidthSpaceRemoved = inputAsHTMLString.replaceAppropiateZeroWidthSpaces() else {
                 return (mutableAttributedString.trimmingTrailingNewlinesAndWhitespaces(), [ParsingError.attributedTextGeneration(text: inputString)])
         }
-        let parsedAttributedString = self.getParsedHTMLAttributedString(fromData: htmlData)
+        let parsedAttributedString = self.getParsedHTMLAttributedString(fromString: inputAsHTMLWithZeroWidthSpaceRemoved)
         guard let parsedHTMLAttributedString = parsedAttributedString else {
             return (mutableAttributedString.trimmingTrailingNewlinesAndWhitespaces(), [ParsingError.attributedTextGeneration(text: inputString)])
         }
@@ -219,20 +219,17 @@ class RichTextParser {
         return (finalOutputString, nil)
     }
 
-    private func getParsedHTMLAttributedString(fromData data: Data) -> NSAttributedString? {
-        var attributedString: NSAttributedString?
+    private func getParsedHTMLAttributedString(fromString string: String) -> NSAttributedString? {
+        guard !string.isEmpty else { return nil }
+        guard let data = string.data(using: .utf8) else { return nil }
+
         let options: [NSAttributedString.DocumentReadingOptionKey: Any] = [
             .documentType: NSAttributedString.DocumentType.html,
             .characterEncoding: String.Encoding.utf8.rawValue
         ]
-        if Thread.isMainThread {
-            attributedString = try? NSAttributedString(data: data, options: options, documentAttributes: nil)
-        } else {
-            DispatchQueue.main.sync {
-                attributedString = try? NSAttributedString(data: data, options: options, documentAttributes: nil)
-            }
-        }
-        return attributedString
+
+        let dtString = DTHTMLAttributedStringBuilder(html: data, options: options, documentAttributes: nil)
+        return dtString?.generatedAttributedString()
     }
 
     private func addCustomStylingToBulletPointsIfNecessary(_ input: NSMutableAttributedString) -> NSMutableAttributedString {
