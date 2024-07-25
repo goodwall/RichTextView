@@ -223,9 +223,10 @@ class RichTextParser {
         guard !string.isEmpty else { return nil }
         guard let data = string.data(using: .utf8) else { return nil }
 
-        let options: [NSAttributedString.DocumentReadingOptionKey: Any] = [
-            .documentType: NSAttributedString.DocumentType.html,
-            .characterEncoding: String.Encoding.utf8.rawValue
+        let options: [String: Any] = [
+            NSAttributedString.DocumentReadingOptionKey.documentType.rawValue: NSAttributedString.DocumentType.html,
+            NSAttributedString.DocumentReadingOptionKey.characterEncoding.rawValue: String.Encoding.utf8.rawValue,
+            DTUseiOS6Attributes: true
         ]
 
         let dtString = DTHTMLAttributedStringBuilder(html: data, options: options, documentAttributes: nil)
