@@ -16,6 +16,7 @@ public class RichTextView: UIView {
     public private(set) var input: String
     private(set) var richTextParser: RichTextParser
     private(set) var textColor: UIColor
+    private(set) var interactiveFont: UIFont?
     private(set) var interactiveTextColor: UIColor
     private(set) var isSelectable: Bool
     private(set) var isEditable: Bool
@@ -42,6 +43,7 @@ public class RichTextView: UIView {
                 isSelectable: Bool = true,
                 isEditable: Bool = false,
                 latexTextBaselineOffset: CGFloat = 0,
+                interactiveFont: UIFont? = nil,
                 interactiveTextColor: UIColor = UIColor.blue,
                 textViewDelegate: RichTextViewDelegate? = nil,
                 customAdditionalAttributes: [String: [NSAttributedString.Key: Any]]? = nil,
@@ -59,6 +61,7 @@ public class RichTextView: UIView {
             customAdditionalAttributes: customAdditionalAttributes
         )
         self.textColor = textColor
+        self.interactiveFont = interactiveFont
         self.interactiveTextColor = interactiveTextColor
         self.textViewDelegate = textViewDelegate
         self.lineBreakMode = lineBreakMode
@@ -88,6 +91,7 @@ public class RichTextView: UIView {
                        lineBreakMode: NSLineBreakMode? = .byTruncatingTail,
                        textAlignment: NSTextAlignment? = nil,
                        latexTextBaselineOffset: CGFloat? = nil,
+                       interactiveFont: UIFont? = nil,
                        interactiveTextColor: UIColor? = nil,
                        customAdditionalAttributes: [String: [NSAttributedString.Key: Any]]? = nil,
                        completion: (([ParsingError]?) -> Void)? = nil) {
@@ -103,6 +107,7 @@ public class RichTextView: UIView {
         self.textColor = textColor ?? self.textColor
         self.lineBreakMode = lineBreakMode
         self.textAlignment = textAlignment
+        self.interactiveFont = interactiveFont ?? self.interactiveFont
         self.interactiveTextColor = interactiveTextColor ?? self.interactiveTextColor
         self.subviews.forEach { $0.removeFromSuperview() }
         self.setupSubviews()
@@ -149,6 +154,7 @@ public class RichTextView: UIView {
                     from: richText,
                     font: font,
                     textColor: self.textColor,
+                    interactiveFont: self.interactiveFont,
                     interactiveTextColor: self.interactiveTextColor,
                     isSelectable: self.isSelectable,
                     isEditable: self.isEditable,

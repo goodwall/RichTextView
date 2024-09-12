@@ -37,6 +37,7 @@ class UITextViewGenerator {
     static func getTextView(from input: NSAttributedString,
                             font: UIFont,
                             textColor: UIColor,
+                            interactiveFont: UIFont?,
                             interactiveTextColor: UIColor,
                             isSelectable: Bool,
                             isEditable: Bool,
@@ -47,6 +48,17 @@ class UITextViewGenerator {
         let mutableInput = NSMutableAttributedString(attributedString: input)
         mutableInput.replaceFont(with: font)
         mutableInput.replaceColor(with: textColor)
+
+        mutableInput.enumerateAttribute(.link, in: NSRange(location: 0, length: mutableInput.length), options: []) { (value, range, pointee) in
+            if value != nil {
+                let attributes: [NSAttributedString.Key: Any] = [
+                    .foregroundColor: interactiveTextColor,
+                    .font: interactiveFont ?? font
+                ]
+                mutableInput.setAttributes(attributes, range: range)
+            }
+        }
+
         textView.attributedText = mutableInput
         textView.accessibilityValue = input.string
         textView.isAccessibilityElement = true
