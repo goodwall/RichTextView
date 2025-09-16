@@ -30,6 +30,5 @@ string with the relevant rich text surrounded by the appropriate tags and it wil
   s.dependency 'iosMath'
   s.dependency 'SnapKit'
   s.dependency 'DTCoreText'
-  s.dependency 'cmark'
   s.swift_version = '5.0'
 end
